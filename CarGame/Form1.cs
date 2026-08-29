@@ -60,6 +60,11 @@ namespace CarGame
         private int laneSpeed = 8;
         private Brush brush;
 
+        //Distance 
+        private float totalDistanceMeters = 0f;
+        private float pixelsperMeter = 12f;
+
+
         public Form1()
         {
             InitializeComponent();
@@ -251,6 +256,9 @@ namespace CarGame
         {
             roadY += speed;
 
+            if (!choosingCar)
+                totalDistanceMeters += speed / pixelsperMeter;
+
             if (roadY >= roadHeight)
                 roadY -= roadHeight;
 
@@ -356,6 +364,8 @@ namespace CarGame
                 DrawCarSelection(e.Graphics);
             else
                 DrawPlayer(e.Graphics);
+
+            DrawDebugInfo(e.Graphics);
         }
 
 
@@ -405,6 +415,25 @@ namespace CarGame
 
             }
         }
+
+        private void DrawDebugInfo(Graphics g)
+        {
+
+            //Draw debug info Overlay
+            using (Brush overlay = new SolidBrush(Color.FromArgb(128, 0, 0, 0)))
+                g.FillRectangle(overlay, new Rectangle(5, ClientSize.Height - 105, 150, 100));
+
+            //Draw debug info
+            using (Font font = new Font("Arial", 10, FontStyle.Regular))
+            {
+                string debugtext = $"Speed: {speed:f2}\n" +
+                                   $"Distance: {totalDistanceMeters:f2} m\n" +
+                                   $"Current Lane: {currentLane}\n" +
+                                   $"Target Lane: {targetLane}";
+                g.DrawString(debugtext, font, Brushes.Magenta, 0, ClientSize.Height - 100);
+            }
+        }
+
 
     }
 }
